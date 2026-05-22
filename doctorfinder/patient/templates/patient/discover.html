@@ -1,0 +1,238 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Discover Doctors – DoctorFinder{% endblock %}
+{% block meta_description %}Browse and discover specialist doctors available for booking on DoctorFinder.{% endblock %}
+
+{% block extra_css %}
+<style>
+  .discover-header {
+    background: linear-gradient(135deg, #0F172A 0%, #1E3A8A 100%);
+    color: white;
+    padding: 3rem 2rem;
+    text-align: center;
+  }
+  .discover-header h1 { font-size: 2.25rem; font-weight: 800; margin-bottom: 0.5rem; }
+  .discover-header p { opacity: 0.8; }
+  .search-bar {
+    display: flex;
+    gap: 0.75rem;
+    max-width: 600px;
+    margin: 2rem auto 0;
+  }
+  .search-bar input {
+    flex: 1;
+    padding: 0.875rem 1.25rem;
+    border-radius: 9999px;
+    border: none;
+    font-size: 0.9rem;
+    outline: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+  .search-bar button {
+    background: #4F46E5;
+    color: white;
+    border: none;
+    padding: 0.875rem 1.75rem;
+    border-radius: 9999px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+  .search-bar button:hover { background: #4338CA; }
+  .filter-bar {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+    align-items: center;
+  }
+  .filter-chip {
+    padding: 0.4rem 1rem;
+    border-radius: 9999px;
+    border: 1.5px solid #E5E7EB;
+    background: white;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: #374151;
+  }
+  .filter-chip:hover, .filter-chip.active {
+    background: #4F46E5;
+    color: white;
+    border-color: #4F46E5;
+  }
+  .doctor-card {
+    background: white;
+    border-radius: 1rem;
+    overflow: hidden;
+    border: 1px solid #E5E7EB;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+  }
+  .doctor-card:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(79,70,229,0.12); }
+  .doctor-avatar {
+    height: 120px;
+    background: linear-gradient(135deg, #C7D2FE 0%, #DDD6FE 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3.5rem;
+  }
+  .doctor-info { padding: 1.25rem; flex: 1; display: flex; flex-direction: column; }
+  .doctor-name { font-weight: 700; font-size: 1.1rem; color: #111827; }
+  .doctor-spec { color: #4F46E5; font-size: 0.85rem; font-weight: 600; margin: 0.25rem 0; }
+  .doctor-exp { color: #6B7280; font-size: 0.8rem; }
+  .doctor-fee-row { display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; }
+  .doctor-fee { font-weight: 800; color: #059669; font-size: 1.1rem; }
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(4px);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 100;
+    display: none;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: white;
+    border-radius: 1.25rem;
+    padding: 2rem;
+    width: 100%;
+    max-width: 440px;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+    animation: fadeIn 0.3s ease;
+  }
+  .modal h2 { font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem; }
+  .modal-close {
+    float: right;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #9CA3AF;
+    line-height: 1;
+  }
+  .modal-close:hover { color: #374151; }
+  .no-results { text-align: center; padding: 4rem; color: #9CA3AF; grid-column: 1/-1; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Header -->
+<div class="discover-header">
+  <h1>🔍 Discover Doctors</h1>
+  <p>Find the right specialist for your health needs</p>
+  <div class="search-bar">
+    <input type="text" id="search-input" placeholder="Search by name or speciality..." oninput="filterDoctors()" />
+    <button onclick="filterDoctors()" id="search-btn">Search</button>
+  </div>
+</div>
+
+<div class="container">
+  <!-- Filters -->
+  <div class="filter-bar" style="margin-top:2rem;" id="filters-row">
+    <span style="font-weight:600;font-size:0.875rem;color:#374151;">Filter:</span>
+    <button class="filter-chip active" onclick="setFilter('all', this)" id="filter-all">All</button>
+    {% for doctor in doctors %}
+      <button class="filter-chip" onclick="setFilter('{{ doctor.speciality|lower }}', this)" id="filter-{{ forloop.counter }}">{{ doctor.speciality }}</button>
+    {% endfor %}
+  </div>
+
+  <!-- Doctors Grid -->
+  <div class="grid grid-cols-3" id="doctors-grid">
+    {% for doctor in doctors %}
+    <div class="doctor-card animate-fade-in" data-name="{{ doctor.name|lower }}" data-spec="{{ doctor.speciality|lower }}" id="doctor-card-{{ doctor.id }}">
+      <div class="doctor-avatar">👨‍⚕️</div>
+      <div class="doctor-info">
+        <div class="doctor-name">Dr. {{ doctor.name }}</div>
+        <div class="doctor-spec">{{ doctor.speciality }}</div>
+        <div class="doctor-exp">⭐ {{ doctor.experience }} years experience</div>
+        <div class="doctor-fee-row">
+          <span class="doctor-fee">₹{{ doctor.fee }}</span>
+          <button class="btn btn-primary" id="book-{{ doctor.id }}-btn"
+            style="border-radius:9999px;font-size:0.875rem;"
+            onclick="openBookingModal({{ doctor.id }}, 'Dr. {{ doctor.name }}', '{{ doctor.speciality }}', '{{ doctor.fee }}')">
+            Book Appointment
+          </button>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="no-results">
+      <div style="font-size:3rem;margin-bottom:1rem;">🏥</div>
+      <p>No doctors found.</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Booking Modal -->
+<div class="modal-overlay" id="booking-modal" aria-modal="true" role="dialog">
+  <div class="modal">
+    <button class="modal-close" onclick="closeBookingModal()" id="modal-close-btn">&times;</button>
+    <h2>📅 Book Appointment</h2>
+    <p id="modal-doctor-info" style="color:#6B7280;margin-bottom:1.5rem;font-size:0.9rem;"></p>
+    <form method="POST" action="{% url 'book_appointment' %}" id="modal-booking-form">
+      {% csrf_token %}
+      <input type="hidden" name="doctor_id" id="modal-doctor-id" />
+      <div class="form-group">
+        <label class="form-label" for="modal-appt-date">Appointment Date</label>
+        <input class="form-input" type="date" name="date" id="modal-appt-date" required />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="modal-appt-time">Preferred Time</label>
+        <input class="form-input" type="time" name="time" id="modal-appt-time" required />
+      </div>
+      <button type="submit" class="btn btn-primary" id="modal-confirm-btn" style="width:100%;padding:0.875rem;border-radius:9999px;font-size:1rem;margin-top:0.5rem;">
+        Confirm Booking
+      </button>
+    </form>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  let currentFilter = 'all';
+
+  function setFilter(spec, el) {
+    currentFilter = spec;
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    filterDoctors();
+  }
+
+  function filterDoctors() {
+    const query = document.getElementById('search-input').value.toLowerCase();
+    document.querySelectorAll('#doctors-grid .doctor-card').forEach(card => {
+      const name = card.dataset.name;
+      const spec = card.dataset.spec;
+      const matchesSearch = name.includes(query) || spec.includes(query);
+      const matchesFilter = currentFilter === 'all' || spec.includes(currentFilter);
+      card.style.display = (matchesSearch && matchesFilter) ? '' : 'none';
+    });
+  }
+
+  function openBookingModal(id, name, spec, fee) {
+    document.getElementById('modal-doctor-id').value = id;
+    document.getElementById('modal-doctor-info').textContent = name + ' • ' + spec + ' • ₹' + fee + ' per visit';
+    document.getElementById('modal-appt-date').min = new Date().toISOString().split('T')[0];
+    document.getElementById('booking-modal').classList.add('open');
+  }
+
+  function closeBookingModal() {
+    document.getElementById('booking-modal').classList.remove('open');
+  }
+
+  document.getElementById('booking-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeBookingModal();
+  });
+</script>
+{% endblock %}

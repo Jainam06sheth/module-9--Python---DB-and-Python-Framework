@@ -1,0 +1,295 @@
+/* ============================
+   DOCTOR.CSS – Doctor Portal
+   ============================ */
+
+.doctor-theme {
+  background: #F8FAFC;
+  min-height: 100vh;
+}
+
+/* Doctor Navbar */
+.doctor-nav {
+  background: rgba(15, 23, 42, 0.97);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+}
+
+.doctor-nav .nav-brand {
+  color: #60A5FA;
+  font-size: 1.4rem;
+}
+
+.doctor-nav .nav-link {
+  color: #94A3B8;
+  font-weight: 500;
+  padding: 0.4rem 0.75rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+
+.doctor-nav .nav-link:hover,
+.doctor-nav .nav-link.active {
+  background: rgba(96, 165, 250, 0.1);
+  color: #60A5FA;
+}
+
+.doctor-nav .btn-primary {
+  background: #3B82F6;
+  color: white;
+  border-radius: 9999px;
+}
+
+.doctor-nav .btn-primary:hover {
+  background: #2563EB;
+  transform: translateY(-1px);
+}
+
+/* Doctor Dashboard Header */
+.doctor-dashboard-header {
+  background: linear-gradient(135deg, #0F172A 0%, #1E3A8A 60%, #1D4ED8 100%);
+  color: white;
+  padding: 3rem 2rem 5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.doctor-dashboard-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+.doctor-dashboard-header::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0; right: 0;
+  height: 48px;
+  background: #F8FAFC;
+  clip-path: ellipse(55% 100% at 50% 100%);
+}
+
+.doctor-dashboard-header h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 0.35rem;
+  position: relative;
+  z-index: 1;
+  letter-spacing: -0.02em;
+}
+
+.doctor-dashboard-header p {
+  opacity: 0.75;
+  font-size: 0.95rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* Doctor Stats Grid */
+.doctor-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+  margin-bottom: 2.5rem;
+}
+
+.doctor-stat-card {
+  background: white;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid #F1F5F9;
+  text-align: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.doctor-stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 28px rgba(59, 130, 246, 0.1);
+}
+
+.doctor-stat-icon {
+  font-size: 2rem;
+  margin-bottom: 0.75rem;
+  display: block;
+}
+
+.doctor-stat-value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #1E3A8A;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+.doctor-stat-label {
+  color: #64748B;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+/* Appointment Status Badges */
+.badge-pending   { background: #FEF3C7; color: #B45309; }
+.badge-approved  { background: #D1FAE5; color: #065F46; }
+.badge-cancelled { background: #FEE2E2; color: #991B1B; }
+.badge-completed { background: #DBEAFE; color: #1D4ED8; }
+
+/* Appointment Table */
+.doctor-table-container {
+  background: white;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid #E2E8F0;
+}
+
+.doctor-table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #E2E8F0;
+  background: #F8FAFC;
+}
+
+.doctor-table-header h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1E3A8A;
+}
+
+table.doctor-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.doctor-table th {
+  padding: 1rem 1.5rem;
+  background: #F8FAFC;
+  font-weight: 600;
+  color: #64748B;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid #E2E8F0;
+}
+
+.doctor-table td {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #F1F5F9;
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+.doctor-table tr:last-child td { border-bottom: none; }
+.doctor-table tr:hover td { background: #F8FAFC; }
+
+/* Action Buttons */
+.btn-approve {
+  background: #D1FAE5;
+  color: #065F46;
+  border: none;
+  padding: 0.35rem 0.875rem;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+.btn-approve:hover { background: #A7F3D0; }
+
+.btn-reject {
+  background: #FEE2E2;
+  color: #991B1B;
+  border: none;
+  padding: 0.35rem 0.875rem;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+.btn-reject:hover { background: #FECACA; }
+
+.btn-complete {
+  background: #DBEAFE;
+  color: #1D4ED8;
+  border: none;
+  padding: 0.35rem 0.875rem;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+.btn-complete:hover { background: #BFDBFE; }
+
+/* Doctor Profile Card */
+.doctor-profile-card {
+  background: white;
+  border-radius: 1.25rem;
+  padding: 2rem;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.doctor-profile-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 1.25rem;
+  background: linear-gradient(135deg, #DBEAFE, #C7D2FE);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  flex-shrink: 0;
+}
+
+.doctor-profile-name {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0F172A;
+  margin-bottom: 0.25rem;
+}
+
+.doctor-profile-spec {
+  color: #3B82F6;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.doctor-profile-meta {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.profile-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #64748B;
+  font-size: 0.875rem;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .doctor-stats-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 640px) {
+  .doctor-stats-grid { grid-template-columns: 1fr; }
+  .doctor-profile-card { flex-direction: column; }
+  .doctor-dashboard-header h1 { font-size: 1.5rem; }
+}

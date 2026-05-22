@@ -1,0 +1,221 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}DoctorFinder – Find Your Doctor{% endblock %}
+{% block meta_description %}DoctorFinder helps you find trusted doctors and book appointments online with ease.{% endblock %}
+
+{% block extra_css %}
+<style>
+  .hero-section {
+    background: linear-gradient(135deg, #1E3A8A 0%, #4F46E5 50%, #7C3AED 100%);
+    padding: 6rem 2rem;
+    text-align: center;
+    color: white;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  .hero-section h1 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  }
+  .hero-section p {
+    font-size: 1.25rem;
+    opacity: 0.9;
+    max-width: 600px;
+    margin: 0 auto 2.5rem;
+  }
+  .hero-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+  .btn-white {
+    background: white;
+    color: #4F46E5;
+    font-weight: 700;
+    padding: 0.75rem 2rem;
+    border-radius: 9999px;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+  .btn-white:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+  .btn-outline-white {
+    background: transparent;
+    color: white;
+    font-weight: 600;
+    padding: 0.75rem 2rem;
+    border-radius: 9999px;
+    border: 2px solid rgba(255,255,255,0.6);
+    cursor: pointer;
+    font-size: 1rem;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .btn-outline-white:hover { background: rgba(255,255,255,0.1); }
+  .stats-bar {
+    background: white;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    border-radius: 1rem;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 2rem;
+    margin: -2rem 2rem 3rem;
+    position: relative;
+    z-index: 10;
+  }
+  .stat-item { text-align: center; }
+  .stat-number { font-size: 2rem; font-weight: 800; color: #4F46E5; }
+  .stat-label { color: #6B7280; font-size: 0.875rem; }
+  .section-title { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .section-sub { color: #6B7280; margin-bottom: 2.5rem; font-size: 1rem; }
+  .doctor-card {
+    background: white;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    border: 1px solid #E5E7EB;
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+  }
+  .doctor-card:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(79,70,229,0.12); }
+  .doctor-avatar {
+    width: 100%;
+    height: 140px;
+    background: linear-gradient(135deg, #C7D2FE, #DDD6FE);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3.5rem;
+  }
+  .doctor-info { padding: 1.25rem; flex: 1; display: flex; flex-direction: column; }
+  .doctor-name { font-weight: 700; font-size: 1.1rem; margin-bottom: 0.25rem; }
+  .doctor-spec { color: #4F46E5; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem; }
+  .doctor-meta { color: #6B7280; font-size: 0.8rem; margin-bottom: 1rem; }
+  .doctor-fee { font-weight: 700; color: #059669; font-size: 1rem; margin-bottom: 1rem; }
+  .features-section { background: #F5F3FF; padding: 4rem 2rem; margin: 3rem 0; }
+  .feature-card {
+    text-align: center;
+    padding: 2rem;
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  .feature-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #EEF2FF, #DDD6FE);
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    font-size: 1.75rem;
+  }
+  .feature-title { font-weight: 700; font-size: 1.1rem; margin-bottom: 0.5rem; }
+  .feature-desc { color: #6B7280; font-size: 0.875rem; line-height: 1.6; }
+  @media (max-width: 768px) {
+    .hero-section h1 { font-size: 2rem; }
+    .stats-bar { flex-direction: column; gap: 1.5rem; margin: -1rem 1rem 2rem; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Hero -->
+<section class="hero-section">
+  <div style="position:relative;z-index:1;">
+    <h1>🩺 Find Your Perfect Doctor</h1>
+    <p>Connect with experienced healthcare professionals and book appointments instantly — from the comfort of your home.</p>
+    <div class="hero-btns">
+      {% if is_logged_in and user_role == 'patient' %}
+        <a href="{% url 'discover_view' %}" class="btn-white" id="hero-discover-btn">Browse Doctors</a>
+        <a href="{% url 'patient_dashboard' %}" class="btn-outline-white" id="hero-dashboard-btn">My Dashboard</a>
+      {% else %}
+        <a href="{% url 'register' %}" class="btn-white" id="hero-register-btn">Get Started Free</a>
+        <a href="{% url 'login' %}" class="btn-outline-white" id="hero-login-btn">Sign In</a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<!-- Stats Bar -->
+<div class="container">
+  <div class="stats-bar animate-fade-in">
+    <div class="stat-item">
+      <div class="stat-number">{{ doctors|length }}+</div>
+      <div class="stat-label">Expert Doctors</div>
+    </div>
+    <div class="stat-item" style="border-left:1px solid #E5E7EB;border-right:1px solid #E5E7EB;padding:0 2rem;">
+      <div class="stat-number">10K+</div>
+      <div class="stat-label">Appointments Booked</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">50+</div>
+      <div class="stat-label">Specialities</div>
+    </div>
+  </div>
+
+  <!-- Doctors Section -->
+  <div style="margin-bottom:3rem;">
+    <h2 class="section-title">Meet Our Doctors</h2>
+    <p class="section-sub">Browse our network of verified, experienced healthcare professionals.</p>
+    <div class="grid grid-cols-4">
+      {% for doctor in doctors %}
+      <div class="doctor-card animate-fade-in">
+        <div class="doctor-avatar">👨‍⚕️</div>
+        <div class="doctor-info">
+          <div class="doctor-name">Dr. {{ doctor.name }}</div>
+          <div class="doctor-spec">{{ doctor.speciality }}</div>
+          <div class="doctor-meta">⭐ {{ doctor.experience }} yrs experience</div>
+          <div class="doctor-fee">₹{{ doctor.fee }} per visit</div>
+          {% if is_logged_in and user_role == 'patient' %}
+            <a href="{% url 'discover_view' %}" class="btn btn-primary" id="book-dr-{{ doctor.id }}-btn" style="margin-top:auto;border-radius:9999px;">Book Now</a>
+          {% else %}
+            <a href="{% url 'login' %}" class="btn btn-primary" id="login-to-book-{{ doctor.id }}-btn" style="margin-top:auto;border-radius:9999px;">Login to Book</a>
+          {% endif %}
+        </div>
+      </div>
+      {% empty %}
+        <p class="text-muted" style="grid-column:1/-1;text-align:center;padding:3rem;">No doctors available yet. Check back soon!</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<!-- Features -->
+<section class="features-section">
+  <div class="container">
+    <h2 class="section-title text-center mb-2">Why Choose DoctorFinder?</h2>
+    <p class="section-sub text-center">We make healthcare simple, accessible, and trustworthy.</p>
+    <div class="grid grid-cols-3">
+      <div class="feature-card animate-fade-in">
+        <div class="feature-icon">🔍</div>
+        <div class="feature-title">Find Specialists</div>
+        <div class="feature-desc">Search across dozens of specialities to find the right doctor for your needs.</div>
+      </div>
+      <div class="feature-card animate-fade-in">
+        <div class="feature-icon">📅</div>
+        <div class="feature-title">Easy Booking</div>
+        <div class="feature-desc">Book appointments in seconds with real-time availability and instant confirmation.</div>
+      </div>
+      <div class="feature-card animate-fade-in">
+        <div class="feature-icon">🔒</div>
+        <div class="feature-title">Secure & Private</div>
+        <div class="feature-desc">Your health data is private and protected with industry-standard security.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
