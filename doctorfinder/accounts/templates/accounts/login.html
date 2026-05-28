@@ -1,0 +1,122 @@
+{% extends 'patient/base.html' %}
+{% load static %}
+
+{% block title %}Login – DoctorFinder{% endblock %}
+
+{% block extra_css %}
+<style>
+  .auth-page {
+    min-height: calc(100vh - 130px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #EEF2FF 0%, #F5F3FF 100%);
+    padding: 2rem;
+  }
+  .auth-card {
+    background: white;
+    border-radius: 1.5rem;
+    padding: 3rem;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 20px 60px rgba(79,70,229,0.12);
+    border: 1px solid #E5E7EB;
+  }
+  .auth-logo {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+  .auth-title { font-size: 1.75rem; font-weight: 800; text-align: center; margin-bottom: 0.4rem; color: #111827; }
+  .auth-sub { text-align: center; color: #6B7280; font-size: 0.9rem; margin-bottom: 2rem; }
+  .role-tabs {
+    display: flex;
+    background: #F3F4F6;
+    border-radius: 0.75rem;
+    padding: 0.25rem;
+    margin-bottom: 1.5rem;
+  }
+  .role-tab {
+    flex: 1;
+    padding: 0.6rem;
+    border: none;
+    background: none;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: #6B7280;
+  }
+  .role-tab.active { background: white; color: #4F46E5; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+  .error-msg { background: #FEE2E2; color: #991B1B; padding: 0.75rem 1rem; border-radius: 0.5rem; font-size: 0.875rem; margin-bottom: 1rem; border: 1px solid #FECACA; }
+  .success-msg { background: #DCFCE7; color: #14532D; padding: 0.75rem 1rem; border-radius: 0.5rem; font-size: 0.875rem; margin-bottom: 1rem; border: 1px solid #BBF7D0; }
+  .auth-footer { text-align: center; margin-top: 1.5rem; font-size: 0.875rem; color: #6B7280; }
+  .auth-footer a { color: #4F46E5; font-weight: 600; text-decoration: none; }
+  .auth-footer a:hover { text-decoration: underline; }
+  .btn-submit {
+    width: 100%;
+    background: linear-gradient(135deg, #4F46E5, #7C3AED);
+    color: white;
+    border: none;
+    padding: 0.875rem;
+    border-radius: 9999px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin-top: 0.5rem;
+  }
+  .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(79,70,229,0.3); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+  <div class="auth-card animate-fade-in">
+    <div class="auth-logo">🩺</div>
+    <h1 class="auth-title">Welcome Back</h1>
+    <p class="auth-sub">Sign in to your DoctorFinder account</p>
+
+    <!-- Role Tabs -->
+    <div class="role-tabs">
+      <button type="button" class="role-tab active" id="tab-patient" onclick="setRole('patient')">Patient</button>
+      <button type="button" class="role-tab" id="tab-doctor" onclick="setRole('doctor')">Doctor</button>
+    </div>
+
+    {% if error %}
+      <div class="error-msg">⚠️ {{ error }}</div>
+    {% endif %}
+
+    <form method="POST" action="{% url 'login' %}" id="login-form">
+      {% csrf_token %}
+      <input type="hidden" name="role" id="role-input" value="patient" />
+
+      <div class="form-group">
+        <label class="form-label" for="login-username">Username</label>
+        <input class="form-input" type="text" name="username" id="login-username" placeholder="Enter your username" required autocomplete="username" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="login-password">Password</label>
+        <input class="form-input" type="password" name="password" id="login-password" placeholder="Enter your password" required autocomplete="current-password" />
+      </div>
+      <button type="submit" class="btn-submit" id="login-submit-btn">Sign In</button>
+    </form>
+    <p class="auth-forgot" style="text-align:center;margin-top:0.75rem;"><a href="{% url 'forgot_password' %}">Forgot password?</a></p>
+
+    <div class="auth-footer">
+      Don't have an account? <a href="{% url 'register' %}" id="go-register-link">Register here</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  function setRole(role) {
+    document.getElementById('role-input').value = role;
+    document.getElementById('tab-patient').classList.toggle('active', role === 'patient');
+    document.getElementById('tab-doctor').classList.toggle('active', role === 'doctor');
+  }
+</script>
+{% endblock %}

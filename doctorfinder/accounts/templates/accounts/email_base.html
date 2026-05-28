@@ -1,0 +1,27 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}DoctorFinder Email{% endblock %}</title>
+  <style>
+    body {font-family: 'Inter', sans-serif; background:#f5f7fa; margin:0; padding:0;}
+    .wrapper {max-width:600px; margin:auto; background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 8px 20px rgba(0,0,0,0.08);}
+    .header {background:#4F46E5; color:#fff; text-align:center; padding:2rem;}
+    .header h1 {margin:0; font-size:1.8rem;}
+    .content {padding:2rem;}
+    .content p {margin:0 0 1rem; line-height:1.5; color:#333;}
+    .button {display:inline-block; background:#4F46E5; color:#fff; padding:0.75rem 1.5rem; border-radius:9999px; text-decoration:none; font-weight:600;}
+    .footer {background:#f0f2f5; text-align:center; padding:1rem; font-size:0.85rem; color:#555;}
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    {% block header %}{% endblock %}
+    <div class="content">
+      {% block content %}{% endblock %}
+    </div>
+    {% block footer %}{% endblock %}
+  </div>
+</body>
+</html>

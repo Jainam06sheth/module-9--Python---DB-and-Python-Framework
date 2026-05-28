@@ -1,38 +1,28 @@
 from django.shortcuts import render, redirect
-
-from accounts.views import patient_required
-from accounts.models import Appointment
-
-from patient.models import Patient
-from doctor.models import Doctor
-
+from patient.models import *
+from accounts.models import checkLoggin, Appointment
+from doctor.models import *
 from datetime import date
 
-
-@patient_required
+@checkLoggin
 def patient_dashboard(request):
-
     try:
-
         patient = Patient.objects.get(
             user_id=request.session['user_id']
         )
-
     except Patient.DoesNotExist:
-
-        e_msg = "Patient profile not found."
-
         return redirect('login')
 
+
     all_appointments = Appointment.objects.filter(
-        patient=patient
-    ).select_related('doctor').order_by(
-        'date',
-        'time'
-    )
+                                    patient=patient
+                                ).select_related('doctor').order_by(
+                                    'date',
+                                    'time'
+                                )
 
     today = date.today()
-                                            
+
     upcoming = []
 
     past = []
@@ -57,7 +47,7 @@ def patient_dashboard(request):
             'Approved',
             'Completed'
         ):
-        
+
             total_spend += appt.doctor.fee
 
     doctors = Doctor.objects.all().order_by('name')
@@ -90,7 +80,7 @@ def patient_dashboard(request):
     )
 
 
-@patient_required
+@checkLoggin
 def book_appointment(request):
 
     if request.method == 'POST':
@@ -158,7 +148,7 @@ def book_appointment(request):
     return redirect('patient_dashboard')
 
 
-@patient_required
+@checkLoggin
 def cancel_appointment(request, appointment_id):
 
     if request.method == 'POST':
@@ -203,7 +193,7 @@ def cancel_appointment(request, appointment_id):
     return redirect('patient_dashboard')
 
 
-@patient_required
+@checkLoggin
 def discover_view(request):
 
     try:

@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'patient/base.html' %}
 {% load static %}
 
 {% block title %}Discover Doctors – DoctorFinder{% endblock %}
@@ -139,8 +139,9 @@
   <div class="filter-bar" style="margin-top:2rem;" id="filters-row">
     <span style="font-weight:600;font-size:0.875rem;color:#374151;">Filter:</span>
     <button class="filter-chip active" onclick="setFilter('all', this)" id="filter-all">All</button>
-    {% for doctor in doctors %}
-      <button class="filter-chip" onclick="setFilter('{{ doctor.speciality|lower }}', this)" id="filter-{{ forloop.counter }}">{{ doctor.speciality }}</button>
+    {% regroup doctors by speciality as speciality_list %}
+    {% for spec in speciality_list %}
+      <button class="filter-chip" onclick="setFilter('{{ spec.grouper|lower }}', this)" id="filter-{{ forloop.counter }}">{{ spec.grouper }}</button>
     {% endfor %}
   </div>
 
@@ -157,7 +158,7 @@
           <span class="doctor-fee">₹{{ doctor.fee }}</span>
           <button class="btn btn-primary" id="book-{{ doctor.id }}-btn"
             style="border-radius:9999px;font-size:0.875rem;"
-            onclick="openBookingModal({{ doctor.id }}, 'Dr. {{ doctor.name }}', '{{ doctor.speciality }}', '{{ doctor.fee }}')">
+            onclick="openBookingModal('{{ doctor.id }}', '{{ doctor.name }}', '{{ doctor.speciality }}', '{{ doctor.fee }}')">
             Book Appointment
           </button>
         </div>

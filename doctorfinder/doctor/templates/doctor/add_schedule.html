@@ -1,0 +1,20 @@
+{% extends 'doctor/base.html' %}
+{% block title %}Add Schedule{% endblock %}
+{% block header %}Add New Schedule{% endblock %}
+{% block content %}
+<h2>Create a Schedule</h2>
+<form method="post">
+  {% csrf_token %}
+  <label for="day">Day:</label>
+  <input type="text" name="day" id="day" required><br>
+  <label for="start_time">Start Time:</label>
+  <input type="time" name="start_time" id="start_time" required><br>
+  <label for="end_time">End Time:</label>
+  <input type="time" name="end_time" id="end_time" required><br>
+  <label for="max_patients">Max Patients:</label>
+  <input type="number" name="max_patients" id="max_patients" required><br>
+  <label for="fee">Fee:</label>
+  <input type="number" name="fee" id="fee" required><br>
+  <button type="submit" class="btn">Add Schedule</button>
+</form>
+{% endblock %}

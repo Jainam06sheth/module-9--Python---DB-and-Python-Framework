@@ -1,0 +1,23 @@
+{% extends 'patient/base.html' %}
+{% block title %}Book Appointment{% endblock %}
+{% block header %}Book an Appointment{% endblock %}
+{% block content %}
+<h2>Book a New Appointment</h2>
+<form method="post">
+  {% csrf_token %}
+  <label for="doctor_id">Choose Doctor:</label>
+  <select name="doctor_id" id="doctor_id" required>
+    {% for doctor in doctors %}
+      <option value="{{ doctor.id }}">{{ doctor.name }} – {{ doctor.speciality }}</option>
+    {% endfor %}
+  </select>
+  <br/><br/>
+  <label for="date">Date:</label>
+  <input type="date" name="date" id="date" required />
+  <br/><br/>
+  <label for="time">Time:</label>
+  <input type="time" name="time" id="time" required />
+  <br/><br/>
+  <button type="submit" class="btn">Submit</button>
+</form>
+{% endblock %}

@@ -1,234 +1,46 @@
-{% extends 'base.html' %}
-{% load static %}
-
-{% block title %}My Dashboard – DoctorFinder{% endblock %}
-{% block meta_description %}Manage your appointments and health records on DoctorFinder.{% endblock %}
-
-{% block extra_css %}
-<style>
-  .dashboard-header {
-    background: linear-gradient(135deg, #1E3A8A 0%, #4F46E5 100%);
-    color: white;
-    padding: 2.5rem 2rem;
-  }
-  .dashboard-header h1 { font-size: 1.75rem; font-weight: 800; margin-bottom: 0.25rem; }
-  .dashboard-header p { opacity: 0.85; font-size: 0.95rem; }
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
-    margin: -2rem 2rem 2rem;
-    position: relative;
-    z-index: 10;
-  }
-  .stat-card {
-    background: white;
-    border-radius: 1rem;
-    padding: 1.5rem;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-  .stat-icon {
-    width: 52px;
-    height: 52px;
-    border-radius: 0.75rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    flex-shrink: 0;
-  }
-  .stat-icon.blue { background: #EEF2FF; }
-  .stat-icon.green { background: #ECFDF5; }
-  .stat-icon.purple { background: #F5F3FF; }
-  .stat-value { font-size: 1.75rem; font-weight: 800; line-height: 1; }
-  .stat-label { color: #6B7280; font-size: 0.8rem; margin-top: 0.25rem; }
-  .section-heading {
-    font-size: 1.25rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  .booking-panel {
-    background: linear-gradient(135deg, #EEF2FF, #F5F3FF);
-    border: 1px solid #C7D2FE;
-    border-radius: 1rem;
-    padding: 1.5rem;
-    margin-bottom: 2rem;
-  }
-  .booking-form {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr auto;
-    gap: 1rem;
-    align-items: end;
-  }
-  @media (max-width: 768px) {
-    .stats-grid { grid-template-columns: 1fr; margin: -1rem 1rem 1rem; }
-    .booking-form { grid-template-columns: 1fr; }
-  }
-  .appt-card {
-    background: white;
-    border-radius: 0.75rem;
-    padding: 1.25rem 1.5rem;
-    border: 1px solid #E5E7EB;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1rem;
-    transition: box-shadow 0.2s;
-  }
-  .appt-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-  .appt-doctor-name { font-weight: 700; font-size: 1rem; }
-  .appt-meta { color: #6B7280; font-size: 0.85rem; margin-top: 0.25rem; }
-  .appointments-list { display: flex; flex-direction: column; gap: 0.75rem; }
-  .empty-state {
-    text-align: center;
-    padding: 3rem;
-    color: #9CA3AF;
-    background: white;
-    border-radius: 1rem;
-    border: 2px dashed #E5E7EB;
-  }
-  .empty-state-icon { font-size: 3rem; margin-bottom: 0.75rem; }
-</style>
-{% endblock %}
-
+{% extends 'patient/base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block header %}Patient Dashboard{% endblock %}
 {% block content %}
-
-<!-- Header -->
-<div class="dashboard-header">
-  <div class="container" style="padding-top:0;padding-bottom:0;">
-    <h1>Welcome back, {{ user_name }} 👋</h1>
-    <p>Manage your appointments and discover new doctors.</p>
-  </div>
+<h2>Welcome, {{ user_name }}!</h2>
+<div class="card">
+  <h3>Upcoming Appointments ({{ upcoming_count }})</h3>
+  {% if upcoming_appointments %}
+    <table>
+      <tr><th>Date</th><th>Time</th><th>Doctor</th><th>Status</th></tr>
+      {% for appt in upcoming_appointments %}
+        <tr>
+          <td>{{ appt.date }}</td>
+          <td>{{ appt.time }}</td>
+          <td>{{ appt.doctor.name }}</td>
+          <td>{{ appt.status }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <p>No upcoming appointments.</p>
+  {% endif %}
 </div>
-
-<!-- Stats Cards -->
-<div class="container">
-  <div class="stats-grid animate-fade-in">
-    <div class="stat-card">
-      <div class="stat-icon blue">📅</div>
-      <div>
-        <div class="stat-value">{{ upcoming_count }}</div>
-        <div class="stat-label">Upcoming Appointments</div>
-      </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon green">✅</div>
-      <div>
-        <div class="stat-value">{{ past_count }}</div>
-        <div class="stat-label">Past Appointments</div>
-      </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon purple">💰</div>
-      <div>
-        <div class="stat-value">₹{{ total_expenditure }}</div>
-        <div class="stat-label">Total Spent</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Book Appointment -->
-  <div class="booking-panel animate-fade-in">
-    <h2 class="section-heading">➕ Book a New Appointment</h2>
-    <form method="POST" action="{% url 'book_appointment' %}" id="book-appointment-form">
-      {% csrf_token %}
-      <div class="booking-form">
-        <div class="form-group" style="margin-bottom:0;">
-          <label class="form-label" for="doctor_id">Select Doctor</label>
-          <select class="form-select" name="doctor_id" id="doctor_id" required>
-            <option value="">-- Choose a Doctor --</option>
-            {% for doctor in doctors %}
-              <option value="{{ doctor.id }}">Dr. {{ doctor.name }} – {{ doctor.speciality }} (₹{{ doctor.fee }})</option>
-            {% endfor %}
-          </select>
-        </div>
-        <div class="form-group" style="margin-bottom:0;">
-          <label class="form-label" for="appt-date">Appointment Date</label>
-          <input class="form-input" type="date" name="date" id="appt-date" required />
-        </div>
-        <div class="form-group" style="margin-bottom:0;">
-          <label class="form-label" for="appt-time">Preferred Time</label>
-          <input class="form-input" type="time" name="time" id="appt-time" required />
-        </div>
-        <button type="submit" class="btn btn-primary" id="book-appt-submit-btn" style="white-space:nowrap;padding:0.75rem 1.5rem;">Book Now</button>
-      </div>
-    </form>
-  </div>
-
-  <!-- Upcoming Appointments -->
-  <div style="margin-bottom:2.5rem;" class="animate-fade-in">
-    <h2 class="section-heading">🗓️ Upcoming Appointments</h2>
-    {% if upcoming_appointments %}
-      <div class="appointments-list">
-        {% for appt in upcoming_appointments %}
-          <div class="appt-card">
-            <div>
-              <div class="appt-doctor-name">Dr. {{ appt.doctor.name }}</div>
-              <div class="appt-meta">{{ appt.doctor.speciality }} &bull; {{ appt.date }} at {{ appt.time }}</div>
-            </div>
-            <div style="display:flex;align-items:center;gap:1rem;">
-              <span class="badge badge-{{ appt.status|lower }}">{{ appt.status }}</span>
-              {% if appt.status == 'Pending' or appt.status == 'Approved' %}
-                <form method="POST" action="{% url 'cancel_appointment' appt.id %}" id="cancel-appt-{{ appt.id }}-form">
-                  {% csrf_token %}
-                  <button type="submit" class="btn btn-danger" id="cancel-appt-{{ appt.id }}-btn" style="font-size:0.8rem;padding:0.4rem 0.8rem;" onclick="return confirm('Cancel this appointment?')">Cancel</button>
-                </form>
-              {% endif %}
-            </div>
-          </div>
-        {% endfor %}
-      </div>
-    {% else %}
-      <div class="empty-state">
-        <div class="empty-state-icon">📭</div>
-        <p>No upcoming appointments. Book one above!</p>
-      </div>
-    {% endif %}
-  </div>
-
-  <!-- Past Appointments -->
-  <div class="animate-fade-in">
-    <h2 class="section-heading">📂 Past Appointments</h2>
-    {% if past_appointments %}
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Doctor</th>
-              <th>Speciality</th>
-              <th>Date</th>
-              <th>Time</th>
-              <th>Fee</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for appt in past_appointments %}
-              <tr>
-                <td><strong>Dr. {{ appt.doctor.name }}</strong></td>
-                <td>{{ appt.doctor.speciality }}</td>
-                <td>{{ appt.date }}</td>
-                <td>{{ appt.time }}</td>
-                <td>₹{{ appt.doctor.fee }}</td>
-                <td><span class="badge badge-{{ appt.status|lower }}">{{ appt.status }}</span></td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    {% else %}
-      <div class="empty-state">
-        <div class="empty-state-icon">🗃️</div>
-        <p>No past appointments yet.</p>
-      </div>
-    {% endif %}
-  </div>
+<div class="card">
+  <h3>Past Appointments ({{ past_count }})</h3>
+  {% if past_appointments %}
+    <table>
+      <tr><th>Date</th><th>Time</th><th>Doctor</th><th>Status</th></tr>
+      {% for appt in past_appointments %}
+        <tr>
+          <td>{{ appt.date }}</td>
+          <td>{{ appt.time }}</td>
+          <td>{{ appt.doctor.name }}</td>
+          <td>{{ appt.status }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <p>No past appointments.</p>
+  {% endif %}
 </div>
-
+<div class="card">
+  <h3>Total Expenditure: ₹{{ total_expenditure }}</h3>
+</div>
+<a href="{% url 'discover_view' %}" class="btn">Book New Appointment</a>
 {% endblock %}

@@ -36,7 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles', 
+    'django.contrib.staticfiles',
     'accounts',
     'doctor',
     'patient',
@@ -122,3 +122,21 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static'
 ]
+
+# ─── Auth ─────────────────────────────────────────────────────────────────────
+# @login_required redirects unauthenticated users to the accounts login page
+LOGIN_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = '/'
+
+# ─── Media (file uploads) ───────────────────────────────────────────────────
+import os
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# ─── Email (for forgot password) ────────────────────────────────────────────
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = "jainamsheth.coder@gmail.com"
+EMAIL_HOST_PASSWORD = "bakd junp kuvq cgat"
+EMAIL_PORT=587
